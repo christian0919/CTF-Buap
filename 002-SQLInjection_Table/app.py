@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Conexión a la base de datos SQLite
 def get_db_connection():
     conn = sqlite3.connect('mydatabase.db')
-    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row  # Esto permite acceder a las columnas por nombre
     return conn
 
 # Crear la tabla flag y agregar un registro
@@ -23,14 +23,17 @@ def index():
     if request.method == 'POST':
         user_input = request.form['user_input']
 
-        # Aquí está la inyección SQL vulnerable
+        # Consulta vulnerable a inyección SQL
         query = f"SELECT * FROM flag WHERE value = '{user_input}'"
 
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
             cursor.execute(query)
-            result = cursor.fetchall()
+            rows = cursor.fetchall()
+            
+            # Convertir sqlite3.Row a un diccionario para poder mostrar los valores
+            result = [dict(row) for row in rows]
         except sqlite3.Error as e:
             result = [("Error en la consulta: ", e)]
         finally:
