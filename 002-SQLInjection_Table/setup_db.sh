@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install sqlite3
+sudo apt-get install sqlite3 -y
 # Crear base de datos SQLite y tabla
 sqlite3 DB_Lab002.db <<EOF
 CREATE TABLE flag (
